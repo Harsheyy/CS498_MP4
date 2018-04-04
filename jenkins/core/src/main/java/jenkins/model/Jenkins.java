@@ -1,5 +1,5 @@
 /*
- * The MIT License
+ * The MIT License -
  *
  * Copyright (c) 2004-2011, Sun Microsystems, Inc., Kohsuke Kawaguchi,
  * Erik Ramfelt, Koichi Fujikawa, Red Hat, Inc., Seiji Sogabe,
