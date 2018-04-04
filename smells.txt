@@ -1,5 +1,0 @@
-1. Lines 558-568 are repeated in lines 606-616.  This is a code smell and is an
-example of a Change Preventer.  If the code starting at 558 is changed, the code
-starting at 606 must also be changed for changes to successfully be implemented.
-This can make program development more complicated and expensive.
-
