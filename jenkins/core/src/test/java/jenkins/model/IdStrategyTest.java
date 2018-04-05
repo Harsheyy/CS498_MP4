@@ -1,15 +1,18 @@
-package jenkins.model;
-
+import static org.junit.Assert.*;
+import javax.annotation.Nonnull;
 import org.junit.Test;
+import jenkins.model.IdStrategy;
+import jenkins.model.IdStrategy.CaseInsensitive;
 
 public class IdStrategyTest {
-    @Test public void test1() {
-    		string x = "word";
-    		assertEquals("word", idFromFilename(word));
+    @Test void test1() {
+    	IdStrategy caseInsensitive = new CaseInsensitive();
+    	String x = "hello";
+    	assertEquals(caseInsensitive.idFromFilename(x),"hello");
     }
     
-    @Test public void test2() {
-		string x = "test";
-		assertEquals("test", idFromFilename(test));
+    @Test void test2() {
+		IdStrategy caseInsensitive = new CaseInsensitive();
+		assertTrue(caseInsensitive.idFromFilename("@/world") == "@world");
     }
 }
