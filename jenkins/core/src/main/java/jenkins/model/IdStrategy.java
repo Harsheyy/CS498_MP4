@@ -240,9 +240,13 @@ public abstract class IdStrategy extends AbstractDescribableImpl<IdStrategy> imp
                     } else if ('_' == c || '.' == c || '-' == c || ' ' == c || '@' == c) {
                         buf.append(c);
                     } else if (c == '~') {
-                    	   for(i = 0; i < chars.length;i++) {
-                    		   hex.append(chars[i]);
-                    	   }
+                    	for(int j = 0; j < 4; j++) {
+                    		i++;
+                    		if (i < chars.length) {
+                    			hex.append(chars[i]);
+                    		} else {
+                    			break;
+                    		}
                         buf.append(Character.valueOf((char)Integer.parseInt(hex.toString(), 16)));
                     }
                 }
