@@ -1051,30 +1051,34 @@ public abstract class HudsonTestCase extends TestCase implements RootAction {
      * @param page
      * @param xpath
      */
+
+    public String nodePath(DomNode page, String xpath) {
+        Object node = page.getFirstByXPath(xpath);
+        assertNotNull("no node found", node);
+        assertTrue("the found object was not a Node " + xpath, node instanceof org.w3c.dom.Node);
+
+        org.w3c.dom.Node n = (org.w3c.dom.Node) node;
+        String textString = n.getTextContent();
+        return textString;
+    }
+    
     public void assertXPath(DomNode page, String xpath) {
         List< ? extends Object> nodes = page.getByXPath(xpath);
         assertFalse("There should be an object that matches XPath:" + xpath, nodes.isEmpty());
     }
 
     public void assertXPathValue(DomNode page, String xpath, String expectedValue) {
-        Object node = page.getFirstByXPath(xpath);
-        assertNotNull("no node found", node);
-        assertTrue("the found object was not a Node " + xpath, node instanceof org.w3c.dom.Node);
-
-        org.w3c.dom.Node n = (org.w3c.dom.Node) node;
-        String textString = n.getTextContent();
+        String textString = nodePath(page, xpath);
         assertEquals("xpath value should match for " + xpath, expectedValue, textString);
     }
 
-    public void assertXPathValueContains(DomNode page, String xpath, String needle) {
-        Object node = page.getFirstByXPath(xpath);
-        assertNotNull("no node found", node);
-        assertTrue("the found object was not a Node " + xpath, node instanceof org.w3c.dom.Node);
 
-        org.w3c.dom.Node n = (org.w3c.dom.Node) node;
-        String textString = n.getTextContent();
+    public void assertXPathValueContains(DomNode page, String xpath, String needle) {
+        String textString = nodePath(page, xpath);
         assertTrue("needle found in haystack", textString.contains(needle)); 
     }
+
+
 
     public void assertXPathResultsContainText(DomNode page, String xpath, String needle) {
         List<? extends Object> nodes = page.getByXPath(xpath);
@@ -1092,6 +1096,7 @@ public abstract class HudsonTestCase extends TestCase implements RootAction {
         }
         assertTrue("needle found in haystack", found); 
     }
+
 
     /**
      * Makes sure that all the images in the page loads successfully.
