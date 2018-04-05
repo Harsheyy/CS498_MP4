@@ -1,0 +1,51 @@
+1. Lines 558-568 are repeated in lines 606-616.  This is a code smell and is an
+example of a Change Preventer.  If the code starting at 558 is changed, the code
+starting at 606 must also be changed for changes to successfully be implemented.
+This can make program development more complicated and expensive.
+
+3. The code smell here may very well be a case of Object-Orientation Abuse.  Since
+the updateComputerList and trimLabels methods lie outside the scope of just the Nodes
+class, it would make more sense to move this method to another place, such as the 
+overall Jenkins class.
+
+4. The code smell here repeats an if statement 4 times and adding an i to each iteration. You can easily replace this code smell by using a while statement or a for loop where you can have a certain number of iterations depending on the i. This would make the code more efficient and easier to follow. 
+
+
+6. For this, we chose the following snippet of code to refactor. Using the extraction method, you can make it more efficient by having the node pathing/textstring be in it's own function.
+
+      <duplication lines="25" tokens="198">
+      <file line="1194"
+            path="/Users/Harsh/Downloads/CS498_MP4-master/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="1056"
+            path="/Users/Harsh/Downloads/CS498_MP4-master/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[        assertThat("There should be an object that matches XPath:" + xpath, nodes.isEmpty(), is(false));
+    }
+
+   <duplication lines="25" tokens="198">
+      <file line="1194"
+            path="/Users/Harsh/Downloads/CS498_MP4-master/jenkins/test/src/main/java/org/jvnet/hudson/test/JenkinsRule.java"/>
+      <file line="1056"
+            path="/Users/Harsh/Downloads/CS498_MP4-master/jenkins/test/src/main/java/org/jvnet/hudson/test/HudsonTestCase.java"/>
+      <codefragment><![CDATA[        assertThat("There should be an object that matches XPath:" + xpath, nodes.isEmpty(), is(false));
+    }
+
+    public void assertXPathValue(DomNode page, String xpath, String expectedValue) {
+        Object node = page.getFirstByXPath(xpath);
+        assertNotNull("no node found", node);
+        assertTrue("the found object was not a Node " + xpath, node instanceof org.w3c.dom.Node);
+
+        org.w3c.dom.Node n = (org.w3c.dom.Node) node;
+        String textString = n.getTextContent();
+        assertEquals("xpath value should match for " + xpath, expectedValue, textString);
+    }
+
+    public void assertXPathValueContains(DomNode page, String xpath, String needle) {
+        Object node = page.getFirstByXPath(xpath);
+        assertNotNull("no node found", node);
+        assertTrue("the found object was not a Node " + xpath, node instanceof org.w3c.dom.Node);
+
+        org.w3c.dom.Node n = (org.w3c.dom.Node) node;
+        String textString = n.getTextContent();
+        assertTrue("needle found in haystack", textString.contains(needle));
+    }
+

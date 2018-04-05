@@ -53,6 +53,8 @@ import java.security.Signature;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
 
 public class Connection {
     public final InputStream in;
@@ -154,7 +156,8 @@ public class Connection {
             paramGen.init(keySize);
 
             KeyPairGenerator dh = KeyPairGenerator.getInstance("DH");
-            dh.initialize(paramGen.generateParameters().getParameterSpec(DHParameterSpec.class));
+            DHParameterSpec DHParameterSpec = paramGen.generateParameters().getParameterSpec(DHParameterSpec.class);
+            dh.initialize(DHParameterSpec);
             keyPair = dh.generateKeyPair();
 
             // send a half and get a half
@@ -163,8 +166,7 @@ public class Connection {
         } else {
             otherHalf = KeyFactory.getInstance("DH").generatePublic(readKey());
 
-            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DH");
-            keyPairGen.initialize(((DHPublicKey) otherHalf).getParams());
+            KeyPairGenerator keyPairGen = generateKeyPairWithSpec(otherHalf);
             keyPair = keyPairGen.generateKeyPair();
 
             // send a half and get a half
@@ -235,6 +237,14 @@ public class Connection {
         sig.update(sharedSecret);
         writeObject(sig.sign());
     }
+
+    public KeyPairGenerator generateKeyPairWithSpec(PublicKey otherHalf)
+           throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+       KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("DH");
+       DHParameterSpec DHParameterSpec = ((DHPublicKey) otherHalf).getParams();
+       keyPairGen.initialize(DHParameterSpec);
+       return keyPairGen;
+   }
 
     /**
      * Verifies that we are talking to a peer that actually owns the private key corresponding to the public key we get.

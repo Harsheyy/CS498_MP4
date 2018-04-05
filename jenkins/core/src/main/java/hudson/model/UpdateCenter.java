@@ -1,5 +1,5 @@
 /*
- * The MIT License
+ * The MIT License -
  *
  * Copyright (c) 2004-2010, Sun Microsystems, Inc., Kohsuke Kawaguchi, Yahoo! Inc., Seiji Sogabe
  *
@@ -115,7 +115,7 @@ import org.kohsuke.stapler.interceptor.RequirePOST;
  */
 @ExportedBean
 public class UpdateCenter extends AbstractModelObject implements Saveable, OnMaster {
-	
+
     private static final String UPDATE_CENTER_URL = System.getProperty(UpdateCenter.class.getName()+".updateCenterUrl","http://updates.jenkins-ci.org/");
 
     /**
@@ -126,7 +126,7 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
 
     @Restricted(NoExternalUse.class)
     public static final String ID_UPLOAD = "_upload";
-	
+
     /**
      * {@link ExecutorService} that performs installation.
      * @since 1.501
@@ -139,7 +139,7 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
      */
     protected final ExecutorService updateService = Executors.newCachedThreadPool(
         new NamingThreadFactory(new DaemonThreadFactory(), "Update site data downloader"));
-        
+
     /**
      * List of created {@link UpdateCenterJob}s. Access needs to be synchronized.
      */
@@ -381,7 +381,7 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
         }
         response.sendRedirect2(".");
     }
-    
+
     /**
      * Cancel all scheduled jenkins restarts
      */
@@ -555,22 +555,26 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
         Map<String,Plugin> pluginMap = new LinkedHashMap<String, Plugin>();
         for (UpdateSite site : sites) {
             for (Plugin plugin: site.getAvailables()) {
-                final Plugin existing = pluginMap.get(plugin.name);
-                if (existing == null) {
-                    pluginMap.put(plugin.name, plugin);
-                } else if (!existing.version.equals(plugin.version)) {
-                    // allow secondary update centers to publish different versions
-                    // TODO refactor to consolidate multiple versions of the same plugin within the one row
-                    final String altKey = plugin.name + ":" + plugin.version;
-                    if (!pluginMap.containsKey(altKey)) {
-                        pluginMap.put(altKey, plugin);
-                    }
-                }
+                tryAddPluginToMap(pluginMap, plugin);
             }
         }
 
         return new ArrayList<Plugin>(pluginMap.values());
     }
+
+	public void tryAddPluginToMap(Map<String, Plugin> pluginMap, Plugin plugin) {
+		final Plugin existing = pluginMap.get(plugin.name);
+		if (existing == null) {
+		    pluginMap.put(plugin.name, plugin);
+		} else if (!existing.version.equals(plugin.version)) {
+		    // allow secondary update centers to publish different versions
+		    // TODO refactor to consolidate multiple versions of the same plugin within the one row
+		    final String altKey = plugin.name + ":" + plugin.version;
+		    if (!pluginMap.containsKey(altKey)) {
+		        pluginMap.put(altKey, plugin);
+		    }
+		}
+	}
 
     /**
      * Returns a list of plugins that should be shown in the "available" tab, grouped by category.
@@ -603,32 +607,22 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
         Map<String,Plugin> pluginMap = new LinkedHashMap<String, Plugin>();
         for (UpdateSite site : sites) {
             for (Plugin plugin: site.getUpdates()) {
-                final Plugin existing = pluginMap.get(plugin.name);
-                if (existing == null) {
-                    pluginMap.put(plugin.name, plugin);
-                } else if (!existing.version.equals(plugin.version)) {
-                    // allow secondary update centers to publish different versions
-                    // TODO refactor to consolidate multiple versions of the same plugin within the one row
-                    final String altKey = plugin.name + ":" + plugin.version;
-                    if (!pluginMap.containsKey(altKey)) {
-                        pluginMap.put(altKey, plugin);
-                    }
-                }
+                tryAddPluginToMap(pluginMap, plugin);
             }
         }
 
         return new ArrayList<Plugin>(pluginMap.values());
     }
-    
+
     /**
      * Ensure that all UpdateSites are up to date, without requiring a user to
      * browse to the instance.
-     * 
+     *
      * @return a list of {@link FormValidation} for each updated Update Site
-     * @throws ExecutionException 
-     * @throws InterruptedException 
+     * @throws ExecutionException
+     * @throws InterruptedException
      * @since 1.501
-     * 
+     *
      */
     public List<FormValidation> updateAllSites() throws InterruptedException, ExecutionException {
         List <Future<FormValidation>> futures = new ArrayList<Future<FormValidation>>();
@@ -638,8 +632,8 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
                 futures.add(future);
             }
         }
-        
-        List<FormValidation> results = new ArrayList<FormValidation>(); 
+
+        List<FormValidation> results = new ArrayList<FormValidation>();
         for (Future<FormValidation> f : futures) {
             results.add(f.get());
         }
@@ -949,7 +943,7 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
         public String getErrorMessage() {
             return error != null ? error.getMessage() : null;
         }
-        
+
         public Throwable getError() {
             return error;
         }
@@ -964,10 +958,10 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
          */
          @Exported(inline=true)
         public volatile RestartJenkinsJobStatus status = new Pending();
-        
+
         /**
          * Cancel job
-         */     
+         */
         public synchronized boolean cancel() {
             if (status instanceof Pending) {
                 status = new Canceled();
@@ -975,7 +969,7 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
             }
             return false;
         }
-        
+
         public RestartJenkinsJob(UpdateSite site) {
             super(site);
         }
@@ -998,26 +992,26 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
         public abstract class RestartJenkinsJobStatus {
             @Exported
             public final int id = iota.incrementAndGet();
-   
+
         }
-        
+
         public class Pending extends RestartJenkinsJobStatus {
             @Exported
             public String getType() {
                 return getClass().getSimpleName();
             }
         }
-        
+
         public class Running extends RestartJenkinsJobStatus {
-            
+
         }
-        
+
         public class Failure extends RestartJenkinsJobStatus {
-            
+
         }
-        
+
         public class Canceled extends RestartJenkinsJobStatus {
-            
+
         }
     }
 
@@ -1294,7 +1288,7 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
             File baseDir = pm.rootDir;
             return new File(baseDir, plugin.name + ".jpi");
         }
-        
+
         private File getLegacyDestination() {
             File baseDir = pm.rootDir;
             return new File(baseDir, plugin.name + ".hpi");
@@ -1340,7 +1334,7 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
         public String toString() {
             return super.toString()+"[plugin="+plugin.title+"]";
         }
-        
+
         /**
          * Called when the download is completed to overwrite
          * the old file with the new file.
@@ -1348,7 +1342,7 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
         @Override
         protected void replace(File dst, File src) throws IOException {
         	File bak = Util.changeExtension(dst,".bak");
-        	
+
             bak.delete();
             final File legacy = getLegacyDestination();
 			if(legacy.exists()){
@@ -1358,7 +1352,7 @@ public class UpdateCenter extends AbstractModelObject implements Saveable, OnMas
             }
             legacy.delete();
             dst.delete(); // any failure up to here is no big deal
-            
+
             if(!src.renameTo(dst)) {
                 throw new IOException("Failed to rename "+src+" to "+dst);
             }

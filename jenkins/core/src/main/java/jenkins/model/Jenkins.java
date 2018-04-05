@@ -1,5 +1,5 @@
 /*
- * The MIT License
+ * The MIT License -
  *
  * Copyright (c) 2004-2011, Sun Microsystems, Inc., Kohsuke Kawaguchi,
  * Erik Ramfelt, Koichi Fujikawa, Red Hat, Inc., Seiji Sogabe,
@@ -3936,7 +3936,12 @@ public class Jenkins extends AbstractCIBase implements DirectlyModifiableTopLeve
         }
     }
 
-    public static class MasterComputer extends Computer {
+    public void updateAndTrim() {
+		updateComputerList();
+		trimLabels();
+	}
+
+	public static class MasterComputer extends Computer {
         protected MasterComputer() {
             super(Jenkins.getInstance());
         }
