@@ -11,9 +11,7 @@ overall Jenkins class.
 4. The code smell here repeats an if statement 4 times and adding an i to each iteration. You can easily replace this code smell by using a while statement or a for loop where you can have a certain number of iterations depending on the i. This would make the code more efficient and easier to follow. 
 
 
-6. For this, we chose the following snippet of code to refactor. Using the extraction method, you can make it more efficient than using: 
-        Object node = page.getFirstByXPath(xpath);
-constantly.
+6. For this, we chose the following snippet of code to refactor. Using the extraction method, you can make it more efficient by having the node pathing/textstring be in it's own function.
 
       <duplication lines="25" tokens="198">
       <file line="1194"
