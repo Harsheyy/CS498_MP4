@@ -7,3 +7,5 @@ This can make program development more complicated and expensive.
 the updateComputerList and trimLabels methods lie outside the scope of just the Nodes
 class, it would make more sense to move this method to another place, such as the 
 overall Jenkins class.
+
+4. The code smell here repeats an if statement 4 times and adding an i to each iteration. You can easily replace this code smell by using a while statement or a for loop where you can have a certain number of iterations depending on the i. This would make the code more efficient and easier to follow. 
